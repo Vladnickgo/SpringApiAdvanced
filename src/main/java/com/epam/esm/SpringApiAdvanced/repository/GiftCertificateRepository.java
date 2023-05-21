@@ -8,6 +8,5 @@ import java.util.List;
 
 @Repository
 public interface GiftCertificateRepository extends JpaRepository<GiftCertificate, Integer> {
-    List<GiftCertificate> findAll();
 
 }

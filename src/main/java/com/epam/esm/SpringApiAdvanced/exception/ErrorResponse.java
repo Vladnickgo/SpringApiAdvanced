@@ -1,9 +1,9 @@
 package com.epam.esm.SpringApiAdvanced.exception;
 
 public class ErrorResponse {
-    private String message;
+    private final String message;
 
-    private Integer errorCode;
+    private final Integer errorCode;
 
     public ErrorResponse(String message, Integer errorCode) {
         this.message = message;

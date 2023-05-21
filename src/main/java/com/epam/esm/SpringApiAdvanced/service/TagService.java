@@ -11,8 +11,6 @@ public interface TagService {
 
     Page<TagDto> findAll(Pageable pageable);
 
-    void deleteById(String id);
-
     Page<TagDto> findAllByTagName(String tagName, Pageable pageable);
 
     TagDto update(Integer id, TagDto tagDto);

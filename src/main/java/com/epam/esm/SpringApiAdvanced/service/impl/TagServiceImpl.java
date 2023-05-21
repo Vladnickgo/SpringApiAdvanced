@@ -70,11 +70,6 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public void deleteById(String id) {
-
-    }
-
-    @Override
     public Page<TagDto> findAllByTagName(String tagName, Pageable pageable) {
         List<TagDto> collect = tagRepository.findByNameContainingIgnoreCase(tagName, pageable).stream()
                 .map(tagMapper::mapEntityToDto)
