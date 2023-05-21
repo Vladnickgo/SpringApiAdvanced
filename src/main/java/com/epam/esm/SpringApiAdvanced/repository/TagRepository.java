@@ -12,8 +12,6 @@ import java.util.List;
 
 @Repository
 public interface TagRepository extends JpaRepository<Tag, Integer> {
-    List<Tag> findAll();
-
     Tag findByName(String tagName);
 
     List<Tag> findByNameContainingIgnoreCase(String pertOfName, Pageable pageable);
