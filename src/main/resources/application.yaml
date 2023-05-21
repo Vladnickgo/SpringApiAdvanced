@@ -1,0 +1,9 @@
+spring:
+  datasource:
+    url: jdbc:mysql://localhost:3306/certificates_advance
+    username: root
+    password: admin
+  jpa:
+    hibernate.ddl-auto: update
+    generate-ddl: true
+    show-sql: true
