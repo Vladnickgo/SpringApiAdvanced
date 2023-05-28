@@ -10,9 +10,9 @@ import org.mapstruct.Mappings;
 @Mapper(componentModel = "spring")
 public interface OrderMapper {
     @Mappings({
-            @Mapping(target = "id", source = "id"),
-            @Mapping(target = "userId", source = "userId"),
-            @Mapping(target = "certificateId", source = "certificateId"),
+            @Mapping(target = "orderId", source = "id"),
+            @Mapping(target = "userId", source = "userDto.id"),
+            @Mapping(target = "certificateId", source = "giftCertificateDto.id"),
             @Mapping(target = "orderPrice", source = "orderPrice"),
             @Mapping(target = "orderDate", source = "orderDate")
     })

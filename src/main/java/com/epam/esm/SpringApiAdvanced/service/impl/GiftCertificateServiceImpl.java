@@ -1,5 +1,6 @@
 package com.epam.esm.SpringApiAdvanced.service.impl;
 
+import com.epam.esm.SpringApiAdvanced.exception.NotFoundException;
 import com.epam.esm.SpringApiAdvanced.repository.GiftCertificateRepository;
 import com.epam.esm.SpringApiAdvanced.repository.entity.GiftCertificate;
 import com.epam.esm.SpringApiAdvanced.service.GiftCertificateService;
@@ -33,5 +34,12 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         return giftCertificateRepository.findAll().stream()
                 .map(giftCertificateMapper::mapEntityToDto)
                 .toList();
+    }
+
+    @Override
+    public GiftCertificateDto findById(int certificateId) {
+        return giftCertificateRepository.findById(certificateId)
+                .map(giftCertificateMapper::mapEntityToDto)
+                .orElseThrow(() -> new NotFoundException("Certificate with id=" + certificateId + " not found"));
     }
 }

@@ -38,11 +38,18 @@ public class OrderServiceImpl implements OrderService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException("User with id=" + userId + " not found"));
         Order order = Order.builder()
-                .certificateId(giftCertificate.getCertificateId())
-                .userId(user.getUserId())
+                .certificateId(giftCertificate.getId())
+                .userId(user.getId())
                 .orderDate(LocalDate.now())
                 .orderPrice(giftCertificate.getPrice())
                 .build();
         return orderMapper.mapEntityToDto(orderRepository.save(order));
+    }
+
+    @Override
+    public OrderDto save(OrderDto orderDto) {
+        Order order = orderMapper.mapDtoToEntity(orderDto);
+        Order savedOrder = orderRepository.save(order);
+        return orderMapper.mapEntityToDto(orderRepository.save(savedOrder));
     }
 }

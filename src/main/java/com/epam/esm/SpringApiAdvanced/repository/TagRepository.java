@@ -2,22 +2,20 @@ package com.epam.esm.SpringApiAdvanced.repository;
 
 import com.epam.esm.SpringApiAdvanced.repository.entity.Tag;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
-@Repository
-public interface TagRepository extends JpaRepository<Tag, Integer> {
+
+public interface TagRepository extends CrudDao<Tag, Integer> {
     Tag findByName(String tagName);
 
-    List<Tag> findByNameContainingIgnoreCase(String pertOfName, Pageable pageable);
+    List<Tag> findByNameContainingIgnoreCase(String partOfName, Pageable pageable);
 
-    @Modifying
-    @Query("update Tag t set t.name = :name where t.id = :id")
-    void updateTagById(@Param("id") Integer id, @Param("name") String name);
+    Tag findMostWidelyUsedTag();
+
+    Optional<Tag> findById(Integer id);
+
+    Integer countAll();
 }
 

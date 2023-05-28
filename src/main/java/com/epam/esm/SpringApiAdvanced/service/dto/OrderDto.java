@@ -14,8 +14,8 @@ import java.time.LocalDate;
 @Builder
 public class OrderDto extends RepresentationModel<OrderDto> {
     private Integer id;
-    private Integer userId;
-    private Integer certificateId;
+    private UserDto userDto;
+    private GiftCertificateDto giftCertificateDto;
     private Integer orderPrice;
     private LocalDate orderDate;
 }

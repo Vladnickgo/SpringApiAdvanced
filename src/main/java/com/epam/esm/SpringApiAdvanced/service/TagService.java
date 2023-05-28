@@ -14,4 +14,6 @@ public interface TagService {
     Page<TagDto> findAllByTagName(String tagName, Pageable pageable);
 
     TagDto update(Integer id, TagDto tagDto);
+
+    TagDto findMostWidelyUsedTag();
 }

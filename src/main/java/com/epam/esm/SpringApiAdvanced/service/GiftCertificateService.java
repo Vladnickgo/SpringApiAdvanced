@@ -8,4 +8,6 @@ public interface GiftCertificateService {
     GiftCertificateDto save(GiftCertificateDto giftCertificateDto);
 
     List<GiftCertificateDto> findAll();
+
+    GiftCertificateDto findById(int certificateId);
 }

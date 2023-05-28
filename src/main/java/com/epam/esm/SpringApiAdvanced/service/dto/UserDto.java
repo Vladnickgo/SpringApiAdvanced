@@ -9,7 +9,7 @@ import org.springframework.hateoas.RepresentationModel;
 @Setter
 @EqualsAndHashCode(callSuper = true)
 @ToString
-@Builder
+@Builder(toBuilder = true)
 public class UserDto extends RepresentationModel<UserDto> {
     private Integer id;
     private String firstName;
