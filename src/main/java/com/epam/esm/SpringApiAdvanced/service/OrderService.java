@@ -13,4 +13,5 @@ public interface OrderService {
 
     OrderDto findById(Integer id);
 
+    Page<OrderDto> findAll(Pageable pageable);
 }

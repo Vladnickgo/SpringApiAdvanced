@@ -14,6 +14,7 @@ import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 
+
 @Repository
 public class OrderRepositoryImpl implements OrderRepository {
     private static final String FIND_BY_USER_ID = "SELECT * FROM orders WHERE user_id = ? LIMIT ? OFFSET ? ";
@@ -22,6 +23,8 @@ public class OrderRepositoryImpl implements OrderRepository {
     private static final String SAVE = "INSERT INTO orders(certificate_id, order_date, order_price, user_id)VALUES (?,?,?,?) ";
     private static final String FIND_LAST_ADDED_ORDER = "SELECT * FROM orders " +
             "WHERE id = (SELECT max(id) FROM orders);";
+    private static final String FIND_ALL = "SELECT * FROM orders LIMIT ? OFFSET ? ";
+    private static final String COUNT_ALL = "SELECT count(*) FROM orders ";
     private final JdbcTemplate jdbcTemplate;
 
     @Autowired
@@ -57,7 +60,18 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     @Override
     public Page<Order> findAll(Pageable pageable) {
-        return null;
+        Integer total = countAll();
+        List<Order> orderList = jdbcTemplate.query(FIND_ALL, ps -> {
+            ps.setInt(1, pageable.getPageSize());
+            ps.setInt(2, (int) pageable.getOffset());
+        }, (rs, rowNum) -> Order.builder()
+                .id(rs.getInt("id"))
+                .certificateId(rs.getInt("certificate_id"))
+                .orderDate(rs.getDate("order_date").toLocalDate())
+                .orderPrice(rs.getInt("order_price"))
+                .userId(rs.getInt("user_id"))
+                .build());
+        return new PageImpl<>(orderList, pageable, total);
     }
 
     @Override
@@ -100,5 +114,9 @@ public class OrderRepositoryImpl implements OrderRepository {
 
     public Integer countAllByUserId(Integer userId) {
         return jdbcTemplate.queryForObject(COUNT_ALL_BY_USER_ID, new Object[]{userId}, Integer.class);
+    }
+
+    public Integer countAll() {
+        return jdbcTemplate.queryForObject(COUNT_ALL, Integer.class);
     }
 }

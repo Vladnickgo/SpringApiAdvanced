@@ -77,4 +77,14 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(() -> new NotFoundException("Order with id=" + id + " not found"));
         return orderMapper.mapEntityToDto(order);
     }
+
+    @Override
+    @Transactional
+    public Page<OrderDto> findAll(Pageable pageable) {
+        Integer total = orderRepository.countAll();
+        List<OrderDto> list = orderRepository.findAll(pageable).stream()
+                .map(orderMapper::mapEntityToDto)
+                .toList();
+        return new PageImpl<>(list, pageable, total);
+    }
 }
