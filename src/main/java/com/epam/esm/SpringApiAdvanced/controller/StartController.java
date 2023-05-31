@@ -13,10 +13,12 @@ import com.epam.esm.SpringApiAdvanced.service.dto.UserDto;
 import com.github.javafaker.Faker;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
 import org.springframework.hateoas.config.EnableHypermediaSupport;
 import org.springframework.http.ResponseEntity;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -78,10 +80,26 @@ public class StartController {
         }
     }
 
-    @GetMapping("")
-    public String starting() {
-        String greetings = "Spring API Advance";
-        return greetings;
+    @GetMapping("/")
+    public ResponseEntity<List<Link>> starting() {
+        List<Link> links = new ArrayList<>();
+        String uriString = ServletUriComponentsBuilder.fromCurrentRequest()
+                .toUriString();
+        Link self = Link.of(uriString, "self");
+        String user = ServletUriComponentsBuilder.fromCurrentRequest().replacePath("/user").toUriString();
+        String orders = ServletUriComponentsBuilder.fromCurrentRequest().replacePath("/order").toUriString();
+        String tags = ServletUriComponentsBuilder.fromCurrentRequest().replacePath("/tag").toUriString();
+        String certificates = ServletUriComponentsBuilder.fromCurrentRequest().replacePath("/certificate").toUriString();
+        Link userLink = Link.of(user, "user");
+        Link orderLink = Link.of(orders, "order");
+        Link tagLink = Link.of(tags, "tag");
+        Link certificateLink = Link.of(certificates, "certificate");
+        links.add(self);
+        links.add(userLink);
+        links.add(orderLink);
+        links.add(certificateLink);
+        links.add(tagLink);
+        return ResponseEntity.ok(links);
     }
 
     @PostMapping("/fill_db")
@@ -99,7 +117,7 @@ public class StartController {
     private Set<Tag> fillTags() {
         Set<Tag> tagSet = new HashSet<>();
         while (tagSet.size() < 50) {
-            String name = faker.funnyName().name() + faker.address().cityName();
+            String name = faker.lorem().word();
             Tag tag = Tag.builder()
                     .name(name)
                     .build();
@@ -132,14 +150,10 @@ public class StartController {
             int userId = faker.number().numberBetween(1, 100);
             GiftCertificateDto giftCertificateServiceById = giftCertificateService.findById(certificateId);
             orderDtoSet.add(OrderDto.builder()
-                    .giftCertificateDto(GiftCertificateDto.builder()
-                            .id(certificateId)
-                            .build())
+                    .certificateId(certificateId)
                     .orderDate(localOrderDate)
                     .orderPrice(giftCertificateServiceById.getPrice())
-                    .userDto(UserDto.builder()
-                            .id(userId)
-                            .build())
+                    .userId(userId)
                     .build());
         }
         for (OrderDto orderDto : orderDtoSet) {
@@ -169,7 +183,9 @@ public class StartController {
         Set<Tag> tags = fillTags();
         Set<GiftCertificate> giftCertificates = fillCertificate();
         Random random = new Random();
-        giftCertificateRepository.saveAll(giftCertificates);
+        for (GiftCertificate giftCertificate : giftCertificates) {
+            giftCertificateRepository.save(giftCertificate);
+        }
         for (Tag tag : tags) {
             tagRepository.save(tag);
         }
@@ -180,5 +196,4 @@ public class StartController {
         for (CertificateTag t : certificateTagSet)
             jdbcTemplate.update(INSERT_INTO_CERTIFICATE_TAG_QUERY, t.certificateId + 1, t.tagId + 1);
     }
-
 }

@@ -34,8 +34,7 @@ public class TagServiceImpl implements TagService {
         Optional<Tag> byId = tagRepository.findById(id);
         if (byId.isPresent()) {
             Tag tag = byId.get();
-            TagDto tagDto = tagMapper.mapEntityToDto(tag);
-            return tagDto;
+            return tagMapper.mapEntityToDto(tag);
         }
         throw new NotFoundException("Tag resource not found (id = " + id + ")");
     }

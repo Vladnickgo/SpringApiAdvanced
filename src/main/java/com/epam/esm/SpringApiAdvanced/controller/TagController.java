@@ -72,7 +72,6 @@ public class TagController {
                     .replaceQueryParam("page", all.getNumber() - 1)
                     .replaceQueryParam("size", all.getSize())
                     .toUriString();
-
             pagedModel.add(Link.of(prevLink, "prev"));
         }
         if (all.hasNext()) {

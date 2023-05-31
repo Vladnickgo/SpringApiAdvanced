@@ -26,10 +26,10 @@ public class TagRepositoryImpl implements TagRepository {
             "         LEFT JOIN orders o on users.id = o.user_id " +
             "         LEFT JOIN certificate_tag ct on o.certificate_id = ct.certificate_id " +
             "         LEFT JOIN tags t on t.id = ct.tag_id " +
-            "WHERE users.id = (SELECT id " +
+            "WHERE users.id = (SELECT users.id " +
             "                  FROM users " +
             "                           LEFT JOIN orders o2 on users.id = o2.user_id " +
-            "                  GROUP BY id " +
+            "                  GROUP BY users.id " +
             "                  ORDER BY sum(order_price) DESC " +
             "                  LIMIT 1) " +
             "GROUP BY users.id, t.id " +
@@ -56,7 +56,7 @@ public class TagRepositoryImpl implements TagRepository {
         return jdbcTemplate.query(query, ps -> {
             ps.setString(1, partOfName);
             ps.setInt(2, pageable.getPageSize());
-            ps.setInt(3, pageable.getPageNumber());
+            ps.setInt(3, (int) pageable.getOffset());
         }, (rs, rowNum) -> {
             Tag tag = new Tag();
             tag.setId(rs.getInt("id"));
@@ -98,7 +98,7 @@ public class TagRepositoryImpl implements TagRepository {
         int total = countAll();
         List<Tag> tagList = jdbcTemplate.query(FIND_ALL, ps -> {
             ps.setInt(1, pageable.getPageSize());
-            ps.setInt(2, pageable.getPageNumber());
+            ps.setInt(2, (int) pageable.getOffset());
         }, (rs, rowNum) -> {
             Tag tag = new Tag();
             tag.setId(rs.getInt("id"));

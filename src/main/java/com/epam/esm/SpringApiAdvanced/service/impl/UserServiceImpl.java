@@ -1,12 +1,16 @@
 package com.epam.esm.SpringApiAdvanced.service.impl;
 
 import com.epam.esm.SpringApiAdvanced.exception.NotFoundException;
-import com.epam.esm.SpringApiAdvanced.repository.UserRepository;
 import com.epam.esm.SpringApiAdvanced.repository.entity.User;
+import com.epam.esm.SpringApiAdvanced.repository.impl.UserRepositoryImpl;
 import com.epam.esm.SpringApiAdvanced.service.UserService;
 import com.epam.esm.SpringApiAdvanced.service.dto.UserDto;
 import com.epam.esm.SpringApiAdvanced.service.mapper.UserMapper;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,20 +18,31 @@ import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
-    private final UserRepository userRepository;
+    private final UserRepositoryImpl userRepository;
     private final UserMapper userMapper;
 
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper) {
+    public UserServiceImpl(UserRepositoryImpl userRepository, UserMapper userMapper) {
         this.userRepository = userRepository;
         this.userMapper = userMapper;
     }
 
+    private Integer countAll() {
+        return userRepository.countAll();
+    }
+
+    private Integer countAllByName(String name) {
+        Optional<Integer> countAllByName = userRepository.countAllByName(name);
+        return countAllByName.orElse(0);
+
+    }
+
     @Override
-    public List<UserDto> findAll() {
-        return userRepository.findAll().stream()
-                .map(userMapper::mapEntityToDto)
-                .toList();
+    public Page<UserDto> findAll(Pageable pageable) {
+        int total = countAll();
+        Page<User> userRepositoryAll = userRepository.findAll(pageable);
+        List<UserDto> userDtoList = userRepositoryAll.stream().map(userMapper::mapEntityToDto).toList();
+        return new PageImpl<>(userDtoList, pageable, total);
     }
 
     @Override
@@ -38,15 +53,20 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> findByName(String name) {
-        return userRepository.findByLastNameContainsIgnoreCase(name).stream()
+    public Page<UserDto> findByName(String name, Pageable pageable) {
+        Integer total = countAllByName(name);
+        List<UserDto> userDtoList = userRepository.findByLastNameContainsIgnoreCase(name, pageable).stream()
                 .map(userMapper::mapEntityToDto)
                 .toList();
+        return new PageImpl<>(userDtoList, pageable, total);
     }
 
     @Override
+    @Transactional
     public UserDto save(UserDto userDto) {
         User user = userMapper.mapDtoToEntity(userDto);
-        return userMapper.mapEntityToDto(userRepository.save(user));
+        userRepository.save(user);
+        User lastAdded = userRepository.findLastAdded().orElseThrow(() -> new NotFoundException("User not found"));
+        return userMapper.mapEntityToDto(lastAdded);
     }
 }

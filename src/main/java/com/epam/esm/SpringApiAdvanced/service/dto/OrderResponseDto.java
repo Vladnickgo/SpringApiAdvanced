@@ -4,7 +4,6 @@ import lombok.*;
 import org.springframework.hateoas.RepresentationModel;
 
 import java.time.LocalDate;
-
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -12,9 +11,7 @@ import java.time.LocalDate;
 @EqualsAndHashCode(callSuper = true)
 @ToString
 @Builder
-public class OrderDto extends RepresentationModel<OrderDto> {
-    private Integer id;
-    private Integer userId;
+public class OrderResponseDto extends RepresentationModel<OrderResponseDto> {
     private Integer certificateId;
     private Integer orderPrice;
     private LocalDate orderDate;

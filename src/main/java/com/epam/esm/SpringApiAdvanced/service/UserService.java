@@ -1,15 +1,15 @@
 package com.epam.esm.SpringApiAdvanced.service;
 
 import com.epam.esm.SpringApiAdvanced.service.dto.UserDto;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface UserService {
-    List<UserDto> findAll();
+    Page<UserDto> findAll(Pageable pageable);
 
     UserDto findById(Integer id);
 
-    List<UserDto> findByName(String name);
+    Page<UserDto> findByName(String name, Pageable pageable);
 
     UserDto save(UserDto userDto);
 }

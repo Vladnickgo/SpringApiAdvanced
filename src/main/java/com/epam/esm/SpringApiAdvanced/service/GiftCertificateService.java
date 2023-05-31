@@ -1,13 +1,17 @@
 package com.epam.esm.SpringApiAdvanced.service;
 
 import com.epam.esm.SpringApiAdvanced.service.dto.GiftCertificateDto;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface GiftCertificateService {
     GiftCertificateDto save(GiftCertificateDto giftCertificateDto);
 
-    List<GiftCertificateDto> findAll();
+    Page<GiftCertificateDto> findAll(Pageable pageable);
 
     GiftCertificateDto findById(int certificateId);
+
+    GiftCertificateDto update(Integer id, GiftCertificateDto giftCertificateDto);
+
+    Page<GiftCertificateDto> findBySeveralTags(String name, Pageable pageable);
 }

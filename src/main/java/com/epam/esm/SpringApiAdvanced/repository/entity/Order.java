@@ -19,12 +19,10 @@ import java.time.LocalDate;
 public class Order implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer orderId;
+    private Integer id;
     private Integer userId;
     private Integer certificateId;
     private Integer orderPrice;
     private LocalDate orderDate;
-//    @ManyToOne
-//    @JoinColumn(name = "users_id")
-//    private User user;
+
 }
