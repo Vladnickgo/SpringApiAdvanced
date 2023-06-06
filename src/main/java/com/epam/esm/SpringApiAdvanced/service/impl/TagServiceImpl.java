@@ -68,7 +68,7 @@ public class TagServiceImpl implements TagService {
         List<TagDto> collect = tagRepository.findByNameContainingIgnoreCase(tagName, pageable).stream()
                 .map(tagMapper::mapEntityToDto)
                 .toList();
-        return new PageImpl<>(collect, pageable, 100);
+        return new PageImpl<>(collect, pageable, collect.size());
     }
 
     @Override

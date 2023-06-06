@@ -30,10 +30,14 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
     }
 
     @Override
+    @Transactional
     public GiftCertificateDto save(GiftCertificateDto giftCertificateDto) {
         GiftCertificate giftCertificate = giftCertificateMapper.mapDtoToEntity(giftCertificateDto);
         giftCertificateRepository.save(giftCertificate);
-        return giftCertificateDto;
+        Integer lastAddedId = giftCertificateRepository.findLastAddedId();
+        GiftCertificate responseCertificate = giftCertificateRepository.findById(lastAddedId)
+                .orElseThrow(() -> new NotFoundException("Certificate with id=" + lastAddedId + " not found"));
+        return giftCertificateMapper.mapEntityToDto(responseCertificate);
     }
 
     @Override
@@ -55,14 +59,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
                 .orElseThrow(() -> new NotFoundException("Certificate with id=" + certificateId + " not found"));
     }
 
-    @Transactional
-    @Override
-    public GiftCertificateDto update(Integer id, GiftCertificateDto giftCertificateDto) {
-        GiftCertificateDto newGiftCertificateDto = getNewGiftCertificateDto(id, giftCertificateDto);
-        GiftCertificate giftCertificate = giftCertificateMapper.mapDtoToEntity(newGiftCertificateDto);
-        giftCertificateRepository.update(id, giftCertificate);
-        return findById(id);
-    }
 
     @Override
     public Page<GiftCertificateDto> findBySeveralTags(String name, Pageable pageable) {
@@ -70,6 +66,15 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
         Set<String> namesSet = Arrays.stream(namesArray).map(String::trim).collect(Collectors.toSet());
         List<GiftCertificateDto> certificateDtoList = giftCertificateRepository.findBySeveralTags(namesSet, pageable).stream().map(giftCertificateMapper::mapEntityToDto).toList();
         return new PageImpl<>(certificateDtoList, pageable, giftCertificateRepository.countCertificatesBySeveralTags(namesSet));
+    }
+
+    @Transactional
+    @Override
+    public GiftCertificateDto update(Integer id, GiftCertificateDto giftCertificateDto) {
+        GiftCertificateDto newGiftCertificateDto = getNewGiftCertificateDto(id, giftCertificateDto);
+        GiftCertificate giftCertificate = giftCertificateMapper.mapDtoToEntity(newGiftCertificateDto);
+        giftCertificateRepository.update(id, giftCertificate);
+        return findById(id);
     }
 
     private GiftCertificateDto getNewGiftCertificateDto(Integer id, GiftCertificateDto giftCertificateDto) {

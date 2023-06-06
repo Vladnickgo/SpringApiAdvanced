@@ -54,8 +54,7 @@ public class TagController {
     }
 
     @GetMapping("/name/{partOfName}")
-    public ResponseEntity<PagedModel<TagDto>> findByPartOfName(@PathVariable String partOfName,
-                                                               @PageableDefault(page = 1, sort = "name") Pageable pageable) {
+    public ResponseEntity<PagedModel<TagDto>> findByPartOfName(@PathVariable String partOfName, Pageable pageable) {
         Page<TagDto> all = tagService.findAllByTagName(partOfName, pageable);
         List<Link> tagLinks = all.stream()
                 .map(tag -> linkTo(methodOn(TagController.class).findById(tag.getId())).withSelfRel())
@@ -92,9 +91,11 @@ public class TagController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TagDto> update(@PathVariable Integer id, @RequestBody TagDto tagDto) {
+    public ResponseEntity<EntityModel<TagDto>> update(@PathVariable Integer id, @RequestBody TagDto tagDto) {
         TagDto update = tagService.update(id, tagDto);
-        return ResponseEntity.ok(update);
+        Link selfLink = linkTo(methodOn(TagController.class).findById(id)).withSelfRel();
+        EntityModel<TagDto> entityModel = EntityModel.of(update, selfLink);
+        return ResponseEntity.ok(entityModel);
     }
 
     @GetMapping("/mostWidely")
@@ -107,11 +108,4 @@ public class TagController {
         return ResponseEntity.ok(entityModel);
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity<EntityModel<TagDto>> updateById(@PathVariable Integer id, @RequestBody TagDto tagDto) {
-        TagDto update = tagService.update(id, tagDto);
-        Link selfLink = linkTo(methodOn(TagController.class).findById(id)).withSelfRel();
-        EntityModel<TagDto> entityModel = EntityModel.of(update, selfLink);
-        return ResponseEntity.ok(entityModel);
-    }
 }

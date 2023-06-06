@@ -146,6 +146,11 @@ public class GiftCertificateRepositoryImpl implements GiftCertificateRepository 
         return new PageImpl<>(certificateList, pageable, total);
     }
 
+    @Override
+    public Integer findLastAddedId() {
+        return jdbcTemplate.queryForObject("SELECT max(id) FROM certificates", Integer.class);
+    }
+
     private static String getNamesString(Set<String> namesSet) {
         return namesSet.stream().collect(Collectors.joining("', '", "'", "'"));
     }

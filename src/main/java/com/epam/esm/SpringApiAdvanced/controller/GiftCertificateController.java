@@ -52,9 +52,16 @@ public class GiftCertificateController {
     }
 
     @PostMapping("/")
-    public GiftCertificateDto save(@RequestBody GiftCertificateDto giftCertificateDto) {
-        giftCertificateService.save(giftCertificateDto);
-        return giftCertificateDto;
+    public ResponseEntity<EntityModel<GiftCertificateDto>> save(@RequestBody GiftCertificateDto giftCertificateDto) {
+        GiftCertificateDto save = giftCertificateService.save(giftCertificateDto);
+        EntityModel<GiftCertificateDto> giftCertificateDtoEntityModel = EntityModel.of(save);
+        String uriString = ServletUriComponentsBuilder.fromCurrentRequest().toUriString();
+        Link link = Link.of(uriString);
+        String findById = ServletUriComponentsBuilder.fromCurrentRequest().replacePath("/certificate/" + save.getId()).toUriString();
+        Link findByIdLink = Link.of(findById);
+        giftCertificateDtoEntityModel.add(link);
+        giftCertificateDtoEntityModel.add(findByIdLink);
+        return ResponseEntity.ok(giftCertificateDtoEntityModel);
     }
 
     private ResponseEntity<PagedModel<GiftCertificateDto>> getPagedModelResponseEntity(@PageableDefault(page = 1, sort = "name") Pageable pageable, Page<GiftCertificateDto> all, List<Link> certificateLinks) {

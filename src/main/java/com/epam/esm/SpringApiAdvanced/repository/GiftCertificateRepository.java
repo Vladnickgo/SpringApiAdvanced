@@ -9,4 +9,6 @@ import java.util.Set;
 public interface GiftCertificateRepository extends CrudDao<GiftCertificate, Integer> {
 
     Page<GiftCertificate> findBySeveralTags(Set<String> namesSet, Pageable pageable);
+
+    Integer findLastAddedId();
 }

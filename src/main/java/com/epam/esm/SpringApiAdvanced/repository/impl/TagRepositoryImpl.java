@@ -7,7 +7,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -19,7 +18,6 @@ public class TagRepositoryImpl implements TagRepository {
     private static final String FIND_ALL = "SELECT * FROM tags LIMIT ? OFFSET ? ";
     private static final String FIND_BY_ID = "SELECT * FROM tags WHERE id=? ";
     private static final String FIND_BY_PART_OF_NAME_ASC = "SELECT * FROM tags WHERE name LIKE CONCAT('%',?,'%') LIMIT ? OFFSET ? ";
-    private static final String FIND_BY_PART_OF_NAME_DESC = "SELECT * FROM tags WHERE name LIKE CONCAT('%',?,'%') LIMIT ? OFFSET ? ORDER BY name DESC ";
     private static final String SAVE = "INSERT INTO tags(name) VALUES (?)";
     private static final String FIND_MOST_USED_TAG = "SELECT t.id, t.name " +
             "FROM users " +
@@ -51,9 +49,7 @@ public class TagRepositoryImpl implements TagRepository {
 
     @Override
     public List<Tag> findByNameContainingIgnoreCase(String partOfName, Pageable pageable) {
-        Sort sort = pageable.getSort();
-        String query = sort.toString().equals("name: ASC") ? FIND_BY_PART_OF_NAME_ASC : FIND_BY_PART_OF_NAME_DESC;
-        return jdbcTemplate.query(query, ps -> {
+        return jdbcTemplate.query(FIND_BY_PART_OF_NAME_ASC, ps -> {
             ps.setString(1, partOfName);
             ps.setInt(2, pageable.getPageSize());
             ps.setInt(3, (int) pageable.getOffset());

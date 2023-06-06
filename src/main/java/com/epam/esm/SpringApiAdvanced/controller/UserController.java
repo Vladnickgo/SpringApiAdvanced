@@ -5,7 +5,6 @@ import com.epam.esm.SpringApiAdvanced.service.dto.UserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.Link;
 import org.springframework.hateoas.PagedModel;
@@ -64,7 +63,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(save);
     }
 
-    private ResponseEntity<PagedModel<UserDto>> getPagedModelResponseEntity(@PageableDefault(page = 0, sort = "id") Pageable pageable, Page<UserDto> all, List<Link> userLinks) {
+    private ResponseEntity<PagedModel<UserDto>> getPagedModelResponseEntity(Pageable pageable, Page<UserDto> all, List<Link> userLinks) {
         Link selfLink = linkTo(methodOn(UserController.class).findAll(pageable)).withSelfRel();
         PagedModel<UserDto> pagedModel = PagedModel.of(all.getContent(), new PagedModel.PageMetadata(all.getSize(), all.getNumber(), all.getTotalElements()), userLinks);
         pagedModel.add(selfLink);
