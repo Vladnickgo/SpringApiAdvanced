@@ -1,8 +1,8 @@
 package com.epam.esm.SpringApiAdvanced.controller;
 
 import com.epam.esm.SpringApiAdvanced.service.dto.TagDto;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +17,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
@@ -25,8 +24,6 @@ import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
-
-import java.sql.SQLException;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -61,12 +58,12 @@ class TagControllerTest {
     @Autowired
     TagController tagController;
 
-    @Before
+    @BeforeClass
     public void setUp() {
         mysql.start();
     }
 
-    @After
+    @AfterClass
     public void close() {
         mysql.close();
     }
@@ -90,22 +87,17 @@ class TagControllerTest {
     }
 
     @Test
-    void testFindById() {
-        try {
-           mockMvc.perform(get("/tag/1"))
+    void testFindById() throws Exception {
+             mockMvc.perform(get("/tag/1"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaTypes.HAL_JSON_VALUE))
                     .andExpect(jsonPath("$._links.self").exists())
                     .andReturn();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-    }
+     }
 
     @Test
-    void testFindByPartOfName() throws SQLException {
-        try {
-            MvcResult mvcResult = mockMvc.perform(get("/tag/name/{partOfName}", "ar"))
+    void testFindByPartOfName() throws Exception {
+            mockMvc.perform(get("/tag/name/{partOfName}", "ar"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaTypes.HAL_JSON_VALUE))
                     .andExpect(jsonPath("$._embedded.tagDtoList[0].id").value("9"))
@@ -114,16 +106,10 @@ class TagControllerTest {
                     .andExpect(jsonPath("$.page.size").value(20))
                     .andExpect(jsonPath("$.page.totalElements").value(1))
                     .andReturn();
-            String contentAsString = mvcResult.getResponse().getContentAsString();
-            System.out.println(contentAsString);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Test
-    public void testGetMostWidelyUsedTag() {
-        try {
+    public void testGetMostWidelyUsedTag() throws Exception {
             mockMvc.perform(get("/tag/mostWidely"))
                     .andExpect(status().isOk())
                     .andExpect(content().contentType(MediaTypes.HAL_JSON_VALUE))
@@ -131,17 +117,13 @@ class TagControllerTest {
                     .andExpect(jsonPath("$.name").value("gravida"))
                     .andExpect(jsonPath("$._links.self.href").value("http://localhost/tag/mostWidely"))
                     .andReturn();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
     }
 
     @Test
-    public void testUpdate() throws Exception {
+    void testUpdate() throws Exception {
         TagDto tagDto = new TagDto();
         tagDto.setId(8);
         tagDto.setName("Java");
-
         ObjectMapper objectMapper = new ObjectMapper();
         String tagJson = objectMapper.writeValueAsString(tagDto);
         MockHttpServletRequestBuilder builder = MockMvcRequestBuilders
@@ -159,7 +141,7 @@ class TagControllerTest {
     }
 
     @Test
-    public void testSave() throws Exception {
+    void testSave() throws Exception {
         TagDto tagDto = new TagDto();
         tagDto.setName("New tag");
         ObjectMapper objectMapper = new ObjectMapper();
