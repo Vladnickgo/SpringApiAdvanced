@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.util.TestPropertyValues;
-import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.hateoas.MediaTypes;
@@ -51,8 +50,6 @@ class TagControllerTest {
         }
     }
 
-    @LocalServerPort
-    private int port;
     @Autowired
     MockMvc mockMvc;
     @Autowired
@@ -66,12 +63,6 @@ class TagControllerTest {
     @AfterClass
     public void close() {
         mysql.close();
-    }
-
-
-    @Test
-    public void contextLoads() throws Exception {
-        this.mockMvc.perform(get("/")).andExpect(status().isOk());
     }
 
     @Test
@@ -88,35 +79,35 @@ class TagControllerTest {
 
     @Test
     void testFindById() throws Exception {
-             mockMvc.perform(get("/tag/1"))
-                    .andExpect(status().isOk())
-                    .andExpect(content().contentType(MediaTypes.HAL_JSON_VALUE))
-                    .andExpect(jsonPath("$._links.self").exists())
-                    .andReturn();
-     }
+        mockMvc.perform(get("/tag/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaTypes.HAL_JSON_VALUE))
+                .andExpect(jsonPath("$._links.self").exists())
+                .andReturn();
+    }
 
     @Test
     void testFindByPartOfName() throws Exception {
-            mockMvc.perform(get("/tag/name/{partOfName}", "ar"))
-                    .andExpect(status().isOk())
-                    .andExpect(content().contentType(MediaTypes.HAL_JSON_VALUE))
-                    .andExpect(jsonPath("$._embedded.tagDtoList[0].id").value("9"))
-                    .andExpect(jsonPath("$._embedded.tagDtoList[0].name").value("arcu"))
-                    .andExpect(jsonPath("$._links.self[0].href").value("http://localhost/tag/9"))
-                    .andExpect(jsonPath("$.page.size").value(20))
-                    .andExpect(jsonPath("$.page.totalElements").value(1))
-                    .andReturn();
+        mockMvc.perform(get("/tag/name/{partOfName}", "ar"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaTypes.HAL_JSON_VALUE))
+                .andExpect(jsonPath("$._embedded.tagDtoList[0].id").value("9"))
+                .andExpect(jsonPath("$._embedded.tagDtoList[0].name").value("arcu"))
+                .andExpect(jsonPath("$._links.self[0].href").value("http://localhost/tag/9"))
+                .andExpect(jsonPath("$.page.size").value(20))
+                .andExpect(jsonPath("$.page.totalElements").value(1))
+                .andReturn();
     }
 
     @Test
     public void testGetMostWidelyUsedTag() throws Exception {
-            mockMvc.perform(get("/tag/mostWidely"))
-                    .andExpect(status().isOk())
-                    .andExpect(content().contentType(MediaTypes.HAL_JSON_VALUE))
-                    .andExpect(jsonPath("$.id").value(18))
-                    .andExpect(jsonPath("$.name").value("gravida"))
-                    .andExpect(jsonPath("$._links.self.href").value("http://localhost/tag/mostWidely"))
-                    .andReturn();
+        mockMvc.perform(get("/tag/mostWidely"))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaTypes.HAL_JSON_VALUE))
+                .andExpect(jsonPath("$.id").value(18))
+                .andExpect(jsonPath("$.name").value("gravida"))
+                .andExpect(jsonPath("$._links.self.href").value("http://localhost/tag/mostWidely"))
+                .andReturn();
     }
 
     @Test

@@ -59,7 +59,6 @@ public class GiftCertificateServiceImpl implements GiftCertificateService {
                 .orElseThrow(() -> new NotFoundException("Certificate with id=" + certificateId + " not found"));
     }
 
-
     @Override
     public Page<GiftCertificateDto> findBySeveralTags(String name, Pageable pageable) {
         String[] namesArray = name.split(",");
