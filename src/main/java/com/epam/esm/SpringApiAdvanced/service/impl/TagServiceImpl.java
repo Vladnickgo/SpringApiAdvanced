@@ -16,7 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TagServiceImpl implements TagService {
@@ -31,12 +30,9 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public TagDto findById(Integer id) {
-        Optional<Tag> byId = tagRepository.findById(id);
-        if (byId.isPresent()) {
-            Tag tag = byId.get();
-            return tagMapper.mapEntityToDto(tag);
-        }
-        throw new NotFoundException("Tag resource not found (id = " + id + ")");
+        return tagRepository.findById(id)
+                .map(tagMapper::mapEntityToDto)
+                .orElseThrow(() -> new NotFoundException("Tag resource not found (id = " + id + ")"));
     }
 
     @Override
@@ -75,13 +71,9 @@ public class TagServiceImpl implements TagService {
     @Transactional
     public TagDto update(Integer id, TagDto tagDto) {
         tagRepository.update(id, tagMapper.mapDtoToEntity(tagDto));
-        Optional<Tag> byId = tagRepository.findById(id);
-        if (byId.isPresent()) {
-            Tag tag = byId.get();
-            return tagMapper.mapEntityToDto(tag);
-        } else {
-            throw new DataBaseRuntimeException("Entity not update");
-        }
+        return tagRepository.findById(id)
+                .map(tagMapper::mapEntityToDto)
+                .orElseThrow(() -> new DataBaseRuntimeException("Entity not update"));
     }
 
     @Override

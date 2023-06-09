@@ -40,11 +40,7 @@ class OrderServiceImplTest {
     @InjectMocks
     OrderServiceImpl orderService;
 
-    @Test
-    void save() {
-    }
-
-    @Test
+       @Test
     void testSave() {
         GiftCertificate certificate = GiftCertificate.builder()
                 .id(1)

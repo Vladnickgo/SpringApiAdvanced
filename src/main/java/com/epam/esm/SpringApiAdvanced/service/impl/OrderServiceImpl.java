@@ -54,14 +54,6 @@ public class OrderServiceImpl implements OrderService {
         return orderMapper.mapEntityToDto(lastAddedOrder);
     }
 
-//    @Override
-//    public OrderDto save(OrderDto orderDto) {
-//        Order order = orderMapper.mapDtoToEntity(orderDto);
-//        orderRepository.save(order);
-//        Order lastAddedOrder = orderRepository.findLastAddedOrder();
-//        return orderMapper.mapEntityToDto(lastAddedOrder);
-//    }
-
     @Override
     public Page<OrderDto> getUserOrders(Integer userId, Pageable pageable) {
         Integer total = orderRepository.countAllByUserId(userId);
